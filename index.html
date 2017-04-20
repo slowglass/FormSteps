@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Long Form</title>
+		<link rel="stylesheet" type="text/css" href="jquery.svg.css"> 
+		<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+		<script type="text/javascript" src="jquery.svg.js"></script>
+	</head>
+	<body>
+		<script>
+		var id=0;
+		var squares = [ {"idx": "START", "x": 0, "y": 0} ];
+		var leftFoot;
+		var rightFoot;
+		function parseFoot(foot)
+		{
+			var v = {
+				"corner": foot.substring(0,foot.indexOf(":")),
+				"direction": foot.substring(foot.indexOf(":") + 1)
+			};
+			return v;
+		}
+
+		function step(name, square, left, right, notes)
+		{
+
+			leftFoot = parseFoot(left);
+			rightFoot = parseFoot(right);
+			var s = squares[squares.length-1];
+			if (square != "0") {
+				var ns = {"idx": "Sqr:"+squares.length, "x": s.x, "y": s.y };
+				switch(square) {
+				   case "N": ns.y += -1; break;
+				   case "S": ns.y +=  1; break;
+				   case "E": ns.x +=  1; break;
+				   case "W": ns.x += -1; break;
+				}
+				squares.push(ns);
+				s = ns;
+			}
+			if (name != "")
+				$("#contents").append("<div  style='clear: both;'><h3>"+name+"</h3></div>");
+			$("#contents").append("<div id='"+id+"' style='float: left;'><div class='svg'></div></div>");
+			$("#"+id+" div.svg").svg({onLoad: function(svg) { drawIntro(id, svg); } });
+			id++;
+		}
+		var corners = { 
+			"SW": { "x": 0, "y": 1 },
+			"SE": { "x": 1, "y": 1 },
+			"NE": { "x": 1, "y": 0 },
+			"NW": { "x": 0, "y": 0 }
+		};
+		var directions = { 
+			"N": 0,
+			"S": 0,
+			"E": 90,
+			"W": 90,
+			"NE": 45,
+			"SW": 45,
+			"NW": -45,
+			"SE": -45
+		}
+		var sqSize = 60;
+		var offset = 15;
+		function addBoundingRect(svg, x, y, szX, szY, style)
+		{
+			console.log("Bounding Box: @("+x+","+y+") -> ["+szX+","+szY+"]");
+			svg.rect((x)*sqSize, (y)*sqSize, (szX)*sqSize+2*offset, (szY)*sqSize+2*offset, style);
+		}
+
+		function addSquare(svg, idx, x, y, style)
+		{
+			console.log("Form Square: ["+idx+"] -> ("+x+","+y+")");
+			svg.rect(offset+x*sqSize, offset+(y)*sqSize, sqSize, sqSize, style);
+		}
+
+		function addFoot(svg, x, y, f, style)
+		{	
+			var cx = offset+(x+corners[f.corner].x)*sqSize;
+			var cy = offset+(y+corners[f.corner].y)*sqSize;
+			var s = jQuery.extend({}, style);
+			var deg = directions[f.direction];
+			s.transform="translate("+cx+" "+cy+") rotate("+deg+")";
+			svg.ellipse('','', 1.5, 5, s);
+
+			s.transform="matrix(-0.5677816,-0.1982858,-0.1916735,0.5873687,455.84982,99.799161)";
+			//svg.use('#Foot', s);
+
+		}
+
+		function addLine(svg, x, y, l, r, style)
+		{
+			var x1=x+corners[l.corner].x;
+			var x2=x+corners[r.corner].x;
+			var y1=y+corners[l.corner].y;
+			var y2=y+corners[r.corner].y;
+			console.log("Stance: ("+x1+","+y1+") => ("+x2+","+y2+")");
+			svg.line(offset+x1*sqSize, offset+(y1)*sqSize, offset+x2*sqSize, offset+(y2)*sqSize, style);
+			addFoot(svg, x, y, l, style);
+			addFoot(svg, x, y, r, style);
+		}
+
+		function drawIntro(id, svg) { 
+			/*
+			var defs = svg.defs('', {});
+			var paths = svg.createPath();
+			svg.path(defs, path.move(150.56377,408.75212)
+				.curveC(142.74757,406.56562, 138.9129,403.82877, 134.70117,397.43078)				
+				.curveC(125.40669,383.31164, 124.44953,378.73271, 123.90467,345.78164)
+				.curveC(124.88039,323.02462, 123.76654,301.40203, 117.45306,279.78164)
+				.curveC(115.69901,273.73164, 112.91869,264.95664, 111.27457,260.28164)
+				.curveC(104.7677,241.77968, 104.10706,238.54651, 104.12286,225.28164)
+				.curveC(104.13647,213.86025, 104.38377,212.17762, 106.98877,205.78164)
+				.curveC(112.01871,193.43181, 115.58867,189.12508, 127.4824,181.05854)
+				.curveC(150.08803,165.727, 163.71749,160.95865, 184.9824,160.9418)
+				.curveC(194.61342,160.93417, 198.21036,161.35151, 203.20258,163.05582)
+				.curveC(214.88184,167.04305, 221.18049,171.93082, 225.20801,180.13212)
+				.curveC(227.77956,185.36859, 227.98032,186.65899, 227.95396,197.78164)
+				.curveC(227.92939,208.1452, 227.56144,210.83427, 225.25576,217.50058)
+				.curveC(221.45033,228.50308, 221.5967,228.2676, 211.4824,239.65923)
+				.curveC(201,251, 182,256, 181,288)
+				.curveC(181,302, 185,320, 193.53204,346.3886)
+				.curveC(197.57427,362.05721, 194.8396,383.62762, 187.30523,395.50401)
+				.curveC(183.8118,401.01069, 178.44327,405.98222, 173.97358,407.84977)
+				.curveC(168.79656,410.01287, 156.73291,410.47787, 150.56377,408.75212)
+				.close(), {id: 'Foot'});
+			*/
+			var min = { "x": null, "y": null};
+			var max = { "x": null, "y": null};
+			for (var i=0; i<squares.length; i++)
+			{
+				var cs = squares[i];
+				if (min.x==null || min.x>cs.x) min.x=cs.x;
+				if (min.y==null || min.y>cs.y) min.y=cs.y;
+				if (max.x==null || max.x<cs.x) max.x=cs.x;
+				if (max.y==null || max.y<cs.y) max.y=cs.y;
+			}
+			max.x=max.x+1;
+			max.y=max.y+1;
+
+			addBoundingRect(svg, 0, 0, max.x-min.x, max.y-min.y, {fill: 'none', stroke: 'blue', strokeWidth: 1});
+
+			for (var i=0; i<squares.length; i++)
+			{
+				var cs = squares[i];
+				addSquare(svg, cs.idx, cs.x-min.x, cs.y-min.y, {fill: 'lightgray', stroke: 'darkgray', strokeWidth: 1});
+			}
+
+			var s = squares[squares.length -1];
+			addSquare(svg, s.idx,  s.x-min.x, s.y-min.y, {fill: 'lightgreen', stroke: 'darkgray', strokeWidth: 1});
+			if (leftFoot != "")
+				addLine(svg, s.x-min.x, s.y-min.y, leftFoot, rightFoot,
+					{fill: 'red', stroke: 'red', strokeWidth: 1})
+			$("#"+id+" div.svg svg").css({"height": (max.y-min.y)*sqSize+2*offset, "width": (max.x-min.x)*sqSize+2*offset});
+		}
+		$( document ).ready(function() {
+			step("Opening the form", "0", "SW:N", "SW:N", "Wu Chi");
+			step("", "0", "SW:N", "SE:N", "Tai Chi");
+
+			step("Grasp the sparrows tail", "0", "SW:N", "SE:N", "Tai Chi");
+			step("", "0", "SW:N", "SE:NE", "Hanging 1");
+			step("", "0", "SW:N", "SE:NE", "Hanging 2");
+
+			step("Ward off", "0", "NW:N", "SE:NE", "");
+			step("", "0", "NW:N", "SE:NE", "Turn to left");
+			step("", "0", "NW:N", "SE:E", "Hanging to right");
+
+			step("1st 4 powers", "0", "NW:NE", "SE:E", "Double ward off");
+			step("", "0", "NW:NE", "SE:E", "Rollback");
+			step("", "0", "NW:NE", "SE:E", "Press");
+			step("", "0", "NW:NE", "SE:E", "Push");
+
+			step("Fishes & Eights", "0", "NW:NE", "SE:NW", "Snake");
+			step("", "0", "NW:NE", "SE:NW", "Push");
+			step("", "0", "NW:NE", "SE:NW", "Pull");
+			step("", "0", "NW:NE", "SE:NW", "Turn");
+
+			step("Single whip", "0", "NW:NE", "SE:NW", "Prepare crane's beak");
+			step("", "S", "SW:W", "NE:NW", "Hanging stance");
+			step("", "0", "SW:W", "NE:NW", "Single whip");
+
+			step("Support the Sky", "0", "SW:NW", "NE:N", "");
+			/* ... */
+			step("White Crane", "0", "SW:W:T", "NE:N", "");
+			step("", "0", "SW:W", "NE:N", "Reach back");
+
+
+			step("Brush Knee Twist Step", "0", "SW:W", "NE:NW", "Step");
+			step("", "0", "SW:W", "SW:N", "Step up");
+			step("", "0", "SW:W", "NE:NW", "Step Back");
+			step("", "0", "SW:SW", "NE:NW", "Reach back");
+			step("", "W", "SE:SW", "NW:W", "Step");
+			step("", "0", "SE:SW", "NW:NW", "Reach back");
+			step("", "W", "SW:W", "NE:NW", "Step");
+			step("", "0", "SW:W", "SW:N", "Step up");
+			step("", "0", "SW:W", "NE:NW", "Step Back");
+
+			step("Punch", "0", "SW:W", "NE:NW", "Rollback");
+			/*...*/
+			step("", "W", "SE:SW", "NW:W", "Step");
+			/*... */
+			step("", "W", "SW:S", "NE:NW", "Punch");
+			step("", "0", "SW:S", "NE:NW", "Separate Obliquely");
+			step("", "0", "SW:S", "NE:NW", "Push");
+
+			step("", "W", "SW:N", "NE:NW", "Snake");
+			step("", "W", "SW:N", "SE:N", "Tai Chi");
+
+
+		});
+			</script>
+	<div id="contents">
+	</div>
+	</body>
+</html>
