@@ -9,8 +9,8 @@
 	<body>
 		<script>
 		var id=0;
-		var squares = [ {"idx": "START", "x": 0, "y": 0, "left": null, "right": null } ];
-		var currentSquare = squares[0];
+		var squares = [ ];
+		var currentSquare = null;
 		var leftFoot;
 		var rightFoot;
 		function parseFoot(foot)
@@ -22,6 +22,133 @@
 			return v;
 		}
 
+		var TYPE = {
+		  FLAT : {value: 0, name: "Flat", code: ""}, 
+		  HANGING_TOE: {value: 1, name: "Hanging Toe", code: "T"}, 
+		  HANGING_HEAL: {value: 2, name: "Hanging Heal", code: "H"}, 
+		  FLOATING : {value: 3, name: "Floating", code: "F"}, 
+		  fromCode: function(c) {
+		  	switch (c)
+		  	{
+		  		case TYPE.FLAT.code:         return TYPE.FLAT;
+		  		case TYPE.HANGING_TOE.code:  return TYPE.HANGING_TOE;
+		  		case TYPE.HANGING_HEAL.code: return TYPE.HANGING_HEAL;
+		  		case TYPE.FLOATING.code:     return TYPE.FLOATING;
+		  	} 
+		  	return FLAT;
+		  }
+		};
+		/*
+
+			"N": 0,
+			"S": 0,
+			"E": 90,
+			"W": 90,
+			"NE": 45,
+			"SW": 45,
+			"NW": -45,
+			"SE": -45*/
+
+		var DIR = {
+		  NONE:      {value: 0, name: "None",      code: "",   offX:  0, offY:  0, dir:   0},
+		  NORTH:     {value: 1, name: "North",     code: "N",  offX:  0, offY: -1, dir:   0},
+		  NORTHEAST: {value: 2, name: "NorthEast", code: "NE", offX:  1, offY: -1, dir:  45},
+		  EAST:      {value: 3, name: "East",      code: "E",  offX:  1, offY:  0, dir:  90},
+		  SOUTHEAST: {value: 4, name: "SouthEast", code: "SE", offX:  1, offY:  1, dir: 135},
+		  SOUTH:     {value: 5, name: "South",     code: "S",  offX:  0, offY:  1, dir: 180},
+		  SOUTHWEST: {value: 6, name: "SouthWest", code: "SW", offX: -1, offY:  1, dir: 225},
+		  WEST:      {value: 7, name: "West",      code: "W",  offX: -1, offY:  0, dir: 270},
+		  NORTHWEST: {value: 8, name: "NorthWest", code: "NW", offX: -1, offY: -1, dir: 315}, 
+		  fromCode: function(c) {
+		  	switch (c)
+		  	{
+		  		case DIR.NORTH.code:     return DIR.NORTH;
+		  		case DIR.NORTHEAST.code: return DIR.NORTHEAST;
+		  		case DIR.EAST.code:      return DIR.EAST;
+		  		case DIR.SOUTHEAST.code: return DIR.SOUTHEAST;
+		  		case DIR.SOUTH.code:     return DIR.SOUTH;
+		  		case DIR.SOUTHWEST.code: return DIR.SOUTHWEST;
+		  		case DIR.WEST.code:      return DIR.WEST;
+		  		case DIR.NORTHWEST.code: return DIR.NORTHWEST;
+		  	} 
+		  	return DIR.NONE;
+		  }
+		};
+
+		function copySquare(sqr)
+		{
+			return jQuery.extend({}, sqr);
+		}
+		/**
+		 * Foot String
+		 * Corner:DirectionPointing:Type
+		 * Corner:  in { N,E,S,W }
+		 * DirectionPointing:  in { N,NE,E,SE,S,SW,W,NW,"" }
+		 * Type:(optional == "") in { F,T,H,"" } 
+		 * Distance: (optional == 1) in { 1,0.5,2 ...}
+		 */
+		function newFoot(str)
+		{
+			var arr = str.split(":");
+			var corner = DIR.fromCode(arr[0]);
+			var dp = DIR.fromCode(arr[1]);
+			var type = (arr.length>2) ? TYPE.fromCode(arr[2]) : TYPE.FLAT;
+			var foot = {
+				x: corner.offX,
+				y: corner.offY,
+				d: dp,
+				t: type
+			}
+			return foot;
+		}
+
+		function copyFoot(foot)
+		{
+			return jQuery.extend({}, foot);
+		}
+		/**
+		 * Foot String
+		 * DirectionMoved:DirectionPointing:Type:DistanceMoved
+		 * DirectionMoved:   in { N,NE,E,SE,S,SW,W,NW,"" }
+		 * DirectionPointing:  in { N,NE,E,SE,S,SW,W,NW }
+		 * Type:(optional == "") in { F,T,H,"" } 
+		 * Distance: (optional == 1) in { 0,0.5,1,1.5,2 ...}
+		 */
+		function moveFoot(foot, move)
+		{
+			if (move == null) return copyFoot(foot);
+
+			var arr = move.split(":");
+			var dirMoved = DIR.fromCode(arr[0]);
+			var dp = (arr.length>1) ? DIR.fromCode(arr[1]) : DIR.NORTH;
+			var type = (arr.length>2) ? TYPE.fromCode(arr[2]) : TYPE.FLAT;
+			var dist = (arr.length>3) ? arr[3] : 1;
+			var newFoot = copyFoot(foot);
+			if (dirMoved != DIR.NONE)
+			{
+				newFoot.x = foot.x +dirMoved.offX*dist;
+				newFoot.y = foot.y +dirMoved.offY*dist;
+			}
+			newFoot.d = dp;
+			newFoot.t = type;
+			return newFoot;
+		}
+
+		function updateCorners(sqr)
+		{
+			var minX = Math.min(sqr.left.x, sqr.right.x);
+			var minY = Math.min(sqr.left.y, sqr.right.y);
+			var maxX = Math.max(sqr.left.x, sqr.right.x);
+			var maxY = Math.max(sqr.left.y, sqr.right.y);
+
+			if (minX == maxX) maxX+=1;
+			if (minY == maxY) minY-=1;
+			sqr.x = minX;
+			sqr.y = minY;
+			sqr.sz = { x: maxX-minX, y: maxY-minY };
+			label: "@("+minX+","+minY+") ["+sqr.sz.x+","+sqr.sz.y+"]";
+		}
+
 		/* Example
 		 * 
 		 * step({ name: "Opening the form", face: "N", left:"SW:N", right:"SW:N", desc: "Wu Chi"});
@@ -29,23 +156,31 @@
          * step({ name: "Grasp the sparrows tail" );
 		 * step("", "0", "SW:N", "SE:NE", "Hanging 1");
 		 * step("", "0", "SW:N", "SE:NE", "Hanging 2");
-		 * /
+		 */
 
 		function step(obj)
 		{
-			if (obj.move != "OPEN")
+			var newSquare;
+			if (currentSquare == null)
 			{
-				var ns = moveSquare(squares.length, currentSquare);
-				ns.left = moveFoot(currentSquare.left, obj.move);
-				ns.right = moveFoot(currentSquare.right, obj.move);
-				squares.push(ns);
-				currentSquare = ns;
+
+				newSquare = {"id": 0, "x": 0, "y": 0, "left": null, "right": null, label: "@(0,0) [1,1]"};
+				newSquare.left = newFoot(obj.leftStart);
+				newSquare.right = newFoot(obj.rightStart);
 			}
+			else
+			{
+				newSquare = copySquare(currentSquare);
+				newSquare.left = moveFoot(currentSquare.left, obj.left);
+				newSquare.right = moveFoot(currentSquare.right, obj.right);
+			}
+
+			updateCorners(newSquare);
+			squares.push(newSquare);
+			currentSquare = newSquare;
+
 			if (obj.name != null)
 				$("#contents").append("<div  style='clear: both;'><h3>"+obj.name+"</h3></div>");
-
-			if (obj.left != null) currentSquare.left=getFoot(obj.left);
-			if (obj.right != null) currentSquare.right=getFoot(obj.right);
 
 			var desc = (obj.desc==null) ? "&nbsp;" : obj.desc;
 			$("#contents").append("<div id='"+id+"' style='float: left;'><div class='svg'></div><div>"+desc+"</div></div>");
@@ -55,44 +190,6 @@
 
 		}
 
-		function stepXX(name, square, left, right, notes)
-		{
-
-			leftFoot = parseFoot(left);
-			rightFoot = parseFoot(right);
-			if (square != "0") {
-				var ns = {"idx": "Sqr:"+squares.length, "x": s.x, "y": s.y };
-				switch(square) {
-				   case "N": ns.y += -1; break;
-				   case "S": ns.y +=  1; break;
-				   case "E": ns.x +=  1; break;
-				   case "W": ns.x += -1; break;
-				}
-				squares.push(ns);
-				currentSquare = ns;
-			}
-			if (name != "")
-				$("#contents").append("<div  style='clear: both;'><h3>"+name+"</h3></div>");
-			$("#contents").append("<div id='"+id+"' style='float: left;'><div class='svg'></div></div>");
-			$("#"+id+" div.svg").svg({onLoad: function(svg) { drawIntro(id, svg); } });
-			id++;
-		}
-		var corners = { 
-			"SW": { "x": 0, "y": 1 },
-			"SE": { "x": 1, "y": 1 },
-			"NE": { "x": 1, "y": 0 },
-			"NW": { "x": 0, "y": 0 }
-		};
-		var directions = { 
-			"N": 0,
-			"S": 0,
-			"E": 90,
-			"W": 90,
-			"NE": 45,
-			"SW": 45,
-			"NW": -45,
-			"SE": -45
-		}
 		var sqSize = 60;
 		var offset = 15;
 		function addBoundingRect(svg, x, y, szX, szY, style)
@@ -109,55 +206,42 @@
 
 		function addFoot(svg, x, y, f, style)
 		{	
-			var cx = offset+(x+corners[f.corner].x)*sqSize;
-			var cy = offset+(y+corners[f.corner].y)*sqSize;
+			var cx = offset+(f.x-x)*sqSize;
+			var cy = offset+(f.y-y)*sqSize;
 			var s = jQuery.extend({}, style);
-			var deg = directions[f.direction];
-			s.transform="translate("+cx+" "+cy+") rotate("+deg+")";
-			svg.ellipse('','', 1.5, 5, s);
+			var deg = f.d.dir;
 
-			s.transform="matrix(-0.5677816,-0.1982858,-0.1916735,0.5873687,455.84982,99.799161)";
-			//svg.use('#Foot', s);
 
+
+			var s_h = jQuery.extend({}, style);
+			var s_t = jQuery.extend({}, style);
+
+			if (f.t == TYPE.HANGING_TOE)  s_h.fill="transparent";
+			if (f.t == TYPE.HANGING_HEAL) s_t.fill="transparent";
+
+			if (f.t != TYPE.FLOATING)
+			{
+				s_h.transform="translate("+cx+" "+cy+") rotate("+deg+") translate(0  3)";
+				s_t.transform="translate("+cx+" "+cy+") rotate("+deg+") translate(0 -3)";
+				svg.ellipse('','', 2, 3, s_h);
+				svg.ellipse('','', 2, 3, s_t);
+			}
 		}
 
 		function addLine(svg, x, y, l, r, style)
 		{
-			var x1=x+corners[l.corner].x;
-			var x2=x+corners[r.corner].x;
-			var y1=y+corners[l.corner].y;
-			var y2=y+corners[r.corner].y;
-			console.log("Stance: ("+x1+","+y1+") => ("+x2+","+y2+")");
-			svg.line(offset+x1*sqSize, offset+(y1)*sqSize, offset+x2*sqSize, offset+(y2)*sqSize, style);
+			if (l.t != TYPE.FLOATING && r.t != TYPE.FLOATING)
+			{
+				console.log("Stance: ("+(l.x-x)+","+(l.y-y)+") => ("+(r.x-x)+","+(r.y-y)+")");
+				svg.line(offset+(l.x-x)*sqSize, offset+(l.y-y)*sqSize, offset+(r.x-x)*sqSize, offset+(r.y-y)*sqSize, style);
+			}
 			addFoot(svg, x, y, l, style);
-			addFoot(svg, x, y, r, style);
+			var s = jQuery.extend({}, style);
+			s.fill=s.stroke="blue";
+			addFoot(svg, x, y, r, s);
 		}
 
 		function drawIntro(id, svg) { 
-			/*
-			var defs = svg.defs('', {});
-			var paths = svg.createPath();
-			svg.path(defs, path.move(150.56377,408.75212)
-				.curveC(142.74757,406.56562, 138.9129,403.82877, 134.70117,397.43078)				
-				.curveC(125.40669,383.31164, 124.44953,378.73271, 123.90467,345.78164)
-				.curveC(124.88039,323.02462, 123.76654,301.40203, 117.45306,279.78164)
-				.curveC(115.69901,273.73164, 112.91869,264.95664, 111.27457,260.28164)
-				.curveC(104.7677,241.77968, 104.10706,238.54651, 104.12286,225.28164)
-				.curveC(104.13647,213.86025, 104.38377,212.17762, 106.98877,205.78164)
-				.curveC(112.01871,193.43181, 115.58867,189.12508, 127.4824,181.05854)
-				.curveC(150.08803,165.727, 163.71749,160.95865, 184.9824,160.9418)
-				.curveC(194.61342,160.93417, 198.21036,161.35151, 203.20258,163.05582)
-				.curveC(214.88184,167.04305, 221.18049,171.93082, 225.20801,180.13212)
-				.curveC(227.77956,185.36859, 227.98032,186.65899, 227.95396,197.78164)
-				.curveC(227.92939,208.1452, 227.56144,210.83427, 225.25576,217.50058)
-				.curveC(221.45033,228.50308, 221.5967,228.2676, 211.4824,239.65923)
-				.curveC(201,251, 182,256, 181,288)
-				.curveC(181,302, 185,320, 193.53204,346.3886)
-				.curveC(197.57427,362.05721, 194.8396,383.62762, 187.30523,395.50401)
-				.curveC(183.8118,401.01069, 178.44327,405.98222, 173.97358,407.84977)
-				.curveC(168.79656,410.01287, 156.73291,410.47787, 150.56377,408.75212)
-				.close(), {id: 'Foot'});
-			*/
 			var min = { "x": null, "y": null};
 			var max = { "x": null, "y": null};
 			for (var i=0; i<squares.length; i++)
@@ -176,44 +260,203 @@
 			for (var i=0; i<squares.length; i++)
 			{
 				var cs = squares[i];
-				addSquare(svg, cs.idx, cs.x-min.x, cs.y-min.y, {fill: 'lightgray', stroke: 'darkgray', strokeWidth: 1});
+				addSquare(svg, cs.id, cs.x-min.x, cs.y-min.y, {fill: 'lightgray', stroke: 'darkgray', strokeWidth: 1});
 			}
 
 			var s = squares[squares.length -1];
-			addSquare(svg, s.idx,  s.x-min.x, s.y-min.y, {fill: 'lightgreen', stroke: 'darkgray', strokeWidth: 1});
-			if (leftFoot != "")
-				addLine(svg, s.x-min.x, s.y-min.y, leftFoot, rightFoot,
-					{fill: 'red', stroke: 'red', strokeWidth: 1})
+			addSquare(svg, s.id,  s.x-min.x, s.y-min.y, {fill: 'lightgreen', stroke: 'darkgray', strokeWidth: 1});
+
+			addLine(svg, min.x, min.y, s.left, s.right,	{fill: 'red', stroke: 'red', strokeWidth: 1})
 			$("#"+id+" div.svg svg").css({"height": (max.y-min.y)*sqSize+2*offset, "width": (max.x-min.x)*sqSize+2*offset});
+			$("#"+id).css({ "width": (max.x-min.x)*sqSize+2*offset});
 		}
+		/**
+		 * Foot String
+		 * DirectionMoved:DirectionPointing:Type:DistanceMoved
+		 * DirectionMoved:   in { N,NE,E,SE,S,SW,W,NW,"" }
+		 * DirectionPointing:  in { N,NE,E,SE,S,SW,W,NW }
+		 * Type:(optional == "") in { F,T,H,"" } 
+		 * Distance: (optional == 1) in { 0,0.5,1,1.5,2 ...}
+		 */
 		$( document ).ready(function() {
-			/*
-			step("Opening the form", "0", "SW:N", "SW:N", "Wu Chi");
+			step({ name: "Opening the form", face: "N", leftStart:"SW:N:H", rightStart:"SW:N", desc: "Wu Chi"});
+			step({ right:"E:N", desc: "Tai Chi"});
+			step({ desc: "Heaven and Earth"});
+
+			step({ name: "Grasp the sparow's tail", desc: "Rotate hands up and to the left"});
+			step({ right: ":NE:H", desc: "Rotate hands down and to the right, drop"});
+
+			step({ name: "Ward off", left:"N:N", right:":NE", desc: "Step to Bo Stance"});
+			step({ desc: "Turn waist to left"});
+			step({ right:":E:T", desc: "Hanging Stance"});
+
+			step({ name: "1st Four powers", right:":E", desc: "Double Ward off : Step to Bo Stance"});
+			step({ desc: "Rollback"});
+			step({ desc: "Press"});
+			step({ desc: "Push"});
+
+			step({ name: "Fishes and Eights", right:":NW", desc: "Turn (Snake)"});
+			step({ desc: "Shift"});
+			step({ desc: "Shift back"});
+			step({ desc: "Turn back"});
+			step({ desc: "Prepare Crane's beak"});
+
+
+			step({ name: "Single whip", left:"S:W:T:2", desc: "Hanging"});
+			step({ left:":W", desc: "Bo"});
+
+			step({ name: "Support the sky", left:":NW"});
+
+			step({ name: "2nd Four Powers", right: ":N:H", desc:"Pluck"});
+			step({ right: ":N", desc: "Shoulder"});
+			step({ desc: "Elbow"});
+			step({ desc: "Split"});
+
+			step({ name: "White Crane", left: ":W:T" });
+			step({ desc:"Turn to left" });
+			step({ desc: "Reach back to right" });
+
+			step({ name:"Brush knee, twist step (1)", left:":W" });
+			step({ right:"SW:W:T", desc: "Step up" });
+			step({ right:"NE:NW", desc: "Step back" });
+			step({ left:":W:H", desc: "Hold the ball" });
+			step({ left:":SW:H", desc: "Reach back to left" });
+
+			step({ name:"Brush knee, twist step (2)", left:":SW", right:"W:W::2"});
+			step({ right:":W:H", desc: "Hold the ball" });
+			step({ right:":NW:H", desc: "Reach back to right" });
+
+			step({ name:"Brush knee, twist step (3)", right:":NW", left:"W:W::2"});
+			step({ right:"SW:W:T", desc: "Step up" });
+			step({ right:"NE:NW", desc: "Step back" });
+
+			step({ name:"TPP", left:":SW:H", desc: "Rollback" });
+			step({ left:":SW", right:"W:W::2", desc: "Backfist" });
+			step({ right:":NW", left:"W:W::2", desc: "Punch" });
+			step({ right:":NW", desc: "Seperate hands" });
+			step({ right:":NW", desc: "Press" });
+
+			step({ left:":N", desc: "Snake" });
+			step({ right:"S:N", desc: "Tai Chi" });
+
+			step({ name:"Carry the tiger and return to the mountain", left:":E", desc: "Snake"});
+			step({ desc: "Reach back" });
+			step({ right: "SW:SE", desc: "Brush Knee(Bo Stance to SE)" });
+			step({ desc: "Rollback"});
+			step({ desc: "Press"});
+			step({ desc: "Push"});
 			
-			step("", "0", "SW:N", "SE:N", "Tai Chi");
+	
+			step({ name: "Fishes and Eights", right:":N", desc: "Turn (Snake)"});
+			step({ desc: "Shift"});
+			step({ desc: "Shift back"});
+			step({ desc: "Turn back"});
+			step({ desc: "Prepare Crane's beak"});
 
-			step("Grasp the sparrows tail", "0", "SW:N", "SE:N", "Tai Chi");
-			step("", "0", "SW:N", "SE:NE", "Hanging 1");
-			step("", "0", "SW:N", "SE:NE", "Hanging 2");
+			step({ name: "Push the mountain", right:":N", desc: "Turn (Snake)"});
+			step({ left: "W:NW:H", desc: "Hanging stance"});
+			step({ right: "N:NW::2", left: ":NW", desc: "Tai Chi"});
 
-			step("Ward off", "0", "NW:N", "SE:NE", "");
-			step("", "0", "NW:N", "SE:NE", "Turn to left");
-			step("", "0", "NW:N", "SE:E", "Hanging to right");
+			step({ name: "Fist under the elbow", left:":W:H", desc: "Hanging stance"});
 
-			step("1st 4 powers", "0", "NW:NE", "SE:E", "Double ward off");
-			step("", "0", "NW:NE", "SE:E", "Rollback");
-			step("", "0", "NW:NE", "SE:E", "Press");
-			step("", "0", "NW:NE", "SE:E", "Push");
+			step({ name: "Back stepping monkey (1)", left: ":W", desc: "Support the sky" });
+			step({ left: "E:SW::2", right:":W", desc: "Step back" });
+			step({ desc: "Turn back" });
 
-			step("Fishes & Eights", "0", "NW:NE", "SE:NW", "Snake");
-			step("", "0", "NW:NE", "SE:NW", "Push");
-			step("", "0", "NW:NE", "SE:NW", "Pull");
-			step("", "0", "NW:NE", "SE:NW", "Turn");
+			step({ name: "Back stepping monkey (2)", desc: "Support the sky" });
+			step({ right: "E:NW::2", left:":W", desc: "Step back" });
+			step({ desc: "Turn back" });
+			step({ name: "Back stepping monkey (3)", left: ":W", desc: "Support the sky" });
+			step({ left: "E:SW::2", right:":W", desc: "Step back" });
+			step({ desc: "Turn back" });
+			step({ name: "Back stepping monkey (4)", desc: "Support the sky" });
+			step({ right: "E:NW::2", left:":W", desc: "Step back" });
+			step({ desc: "Turn back" });
+			step({ name: "Back stepping monkey (5)", left: ":W", desc: "Support the sky" });
+			step({ left: "E:SW::2", right:":W", desc: "Step back" });
+			step({ desc: "Turn back" });
 
-			step("Single whip", "0", "NW:NE", "SE:NW", "Prepare crane's beak");
-			step("", "S", "SW:W", "NE:NW", "Hanging stance");
-			step("", "0", "SW:W", "NE:NW", "Single whip");
+			step({ desc: "Seperate the hands obliquely" });
+			step({ desc: "Hold the ball (looking North)" });
+			step({ right: "E:N:T:2", desc: "Hanging stance" });
+			step({ right: ":N", left: ":NW", desc: "Part the wild horses mane" });
 
+			step({ name: "2nd Four Powers", right: ":N:H", desc:"Pluck"});
+			step({ right: ":N", desc: "Shoulder"});
+			step({ desc: "Elbow"});
+			step({ desc: "Split"});
+
+			
+			step({ name: "White Crane", left: ":W:T" });
+			step({ desc:"Turn to left" });
+			step({ desc: "Reach back to right" });
+
+			step({ name:"Pluck the needle", left:":W" });
+			step({ right:"SW:W:T", desc: "Step up" });
+			step({ right:"NE:NW", desc: "Step back" });
+			step({ left:":W:T", desc: "Pluck the needle" });
+			step({ left:":W", desc: "Fan through the back" });
+
+
+			step({ name:"Yin yang hands", left:":NE" , desc: "Snake"});
+			step({ right:"S:W::2" , desc: "Step"});
+			step({  desc: "Rollback"});
+			step({  right: "::F", desc: "Backfist and kick"});
+			step({  left: "E:E::2", right: ":SE", desc: "Punch"});
+			step({  desc: "Seperate the hands obliquely"});
+			step({  left: "W:N:T:2", desc: "Hold the ball"});
+
+
+			step({ name: "Ward off", left:":N", right:":NE", desc: "Step to Bo Stance"});
+
+			step({ desc: "Turn waist to left"});
+			step({ right:":E:T", desc: "Hanging Stance"});
+
+			step({ name: "1st Four powers", right:":E", desc: "Double Ward off : Step to Bo Stance"});
+			step({ desc: "Rollback"});
+			step({ desc: "Press"});
+			step({ desc: "Push"});
+
+			step({ name: "Fishes and Eights", right:":NW", desc: "Turn (Snake)"});
+			step({ desc: "Shift"});
+			step({ desc: "Shift back"});
+			step({ desc: "Turn back"});
+			step({ desc: "Prepare Crane's beak"});
+
+
+			step({ name: "Single whip", left:"S:W:T:2", desc: "Hanging"});
+			step({ left:":W", desc: "Bo"});
+
+			step({ name: "Cloud Hands", left:":N", desc: "Snake"});
+			step({ right:"S:N", desc: "Step back"});
+			step({ desc: "Push right"});
+			step({ desc: "Push left"});
+			step({ left: "W:N::0.5", desc: "Step out"});
+			step({ right: "W:N::0.5", desc: "Step in"});
+			step({ desc: "Push right"});
+			step({ desc: "Push left"});
+			step({ left: "W:N::0.5", desc: "Step out"});
+			step({ right: "W:N::0.5", desc: "Step in"});
+			step({ desc: "Push right"});
+			step({ desc: "Push left"});
+			step({ left: "W:N::0.5", desc: "Step out"});
+			step({ right: "W:N::0.5", desc: "Step in"});
+			step({ desc: "Push right"});
+			step({ desc: "Push left"});
+			step({ left: "W:N::0.5", desc: "Step out"});
+			step({ right: "W:N::0.5", desc: "Step in"});
+			step({ desc: "Push right"});
+			step({ desc: "Push left"});
+			step({ left: "W:N::0.5", desc: "Step out"});
+			step({ right: "W:N::0.5", desc: "Step in"});
+
+
+			step({ desc: "Prepare Crane's beak"});
+			step({ name: "Single whip", left:"S:W:T", desc: "Hanging"});
+			step({ left:":W", right: ":NW", desc: "Bo"});
+
+			/*
+			
 			step("Support the Sky", "0", "SW:NW", "NE:N", "");
 			// .......
 			step("White Crane", "0", "SW:W:T", "NE:N", "");
