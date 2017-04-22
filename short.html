@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Long Form</title>
+		<link rel="stylesheet" type="text/css" href="jquery.svg.css"> 
+		<link rel="stylesheet" type="text/css" href="form-display.css"> 
+		<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+		<script type="text/javascript" src="jquery.svg.js"></script>
+		<script type="text/javascript" src="form-display.js"></script>
+	</head>
+	<body>
+		<h2>The Long Form</h2>
+		<script>
+		/**
+		 * Foot String
+		 * DirectionMoved:DirectionPointing:Type:DistanceMoved
+		 * DirectionMoved:   in { N,NE,E,SE,S,SW,W,NW,"" }
+		 * DirectionPointing:  in { N,NE,E,SE,S,SW,W,NW }
+		 * Type:(optional == "") in { F,T,H,"" } 
+		 * Distance: (optional == 1) in { 0,0.5,1,1.5,2 ...}
+		 */
+		$( document ).ready(function() {
+			step({ name: "Opening the form", face: "N", leftStart:"SW:N", rightStart:"SW:N", desc: "Wu Chi"});
+			step({ right:"E:N", desc: "Tai Chi"});
+			step({ desc: "Heaven and Earth (1)"});
+			step({ desc: "Heaven and Earth (2)"});
+			step({ desc: "Heaven and Earth (3)"});
+			step({ left: "S:W:H", desc: "Hold the ball"});
+
+
+			step({ name: "Part the wild horse's mane", left: ":W:", right: ":NW", desc: "Step"});
+			step({ left: ":SW:H", desc: "Rock back and hold the ball"});
+			step({ left: ":SW", right: "W:W::2", desc: "Step"});
+			step({ right: ":NW:H", desc: "Rock back and hold the ball"});
+			step({ right: ":NW", left: "W:W::2", desc: "Step"});
+			displaySummary();
+		});
+			</script>
+	<div id="contents">
+	</div>
+	</body>
+</html>
