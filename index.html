@@ -7,20 +7,27 @@
 		<script type="text/javascript" src="jquery.svg.js"></script>
 	</head>
 	<body>
+		<style>
+		.button {
+		    background-color: #4CAF50; /* Green */
+		    border: none;
+		    color: white;
+		    padding: 15px 32px;
+		    text-align: center;
+		    text-decoration: none;
+		    display: inline-block;
+		    font-size: 16px;
+		    margin: 10px;
+		}
+		</style>
 		<script>
 		var id=0;
 		var squares = [ ];
 		var currentSquare = null;
-		var leftFoot;
-		var rightFoot;
-		function parseFoot(foot)
-		{
-			var v = {
-				"corner": foot.substring(0,foot.indexOf(":")),
-				"direction": foot.substring(foot.indexOf(":") + 1)
-			};
-			return v;
-		}
+		var currentStep = 0;
+
+		var sqSize = 60;
+		var offset = 15;
 
 		var TYPE = {
 		  FLAT : {value: 0, name: "Flat", code: ""}, 
@@ -38,16 +45,6 @@
 		  	return FLAT;
 		  }
 		};
-		/*
-
-			"N": 0,
-			"S": 0,
-			"E": 90,
-			"W": 90,
-			"NE": 45,
-			"SW": 45,
-			"NW": -45,
-			"SE": -45*/
 
 		var DIR = {
 		  NONE:      {value: 0, name: "None",      code: "",   offX:  0, offY:  0, dir:   0},
@@ -75,10 +72,12 @@
 		  }
 		};
 
+
 		function copySquare(sqr)
 		{
 			return jQuery.extend({}, sqr);
 		}
+
 		/**
 		 * Foot String
 		 * Corner:DirectionPointing:Type
@@ -175,33 +174,83 @@
 				newSquare.right = moveFoot(currentSquare.right, obj.right);
 			}
 
+			if (obj.name != null) newSquare.name = obj.name;
+			newSquare.desc = obj.desc;
+
 			updateCorners(newSquare);
 			squares.push(newSquare);
 			currentSquare = newSquare;
-
-			if (obj.name != null)
-				$("#contents").append("<div  style='clear: both;'><h3>"+obj.name+"</h3></div>");
-
-			var desc = (obj.desc==null) ? "&nbsp;" : obj.desc;
-			$("#contents").append("<div id='"+id+"' style='float: left;'><div class='svg'></div><div>"+desc+"</div></div>");
-
-			$("#"+id+" div.svg").svg({onLoad: function(svg) { drawIntro(id, svg); } });
-			id++;
-
 		}
 
-		var sqSize = 60;
-		var offset = 15;
+		function displayAll()
+		{
+			$("#contents").html("");
+			$("#contents").append("<div id='buttons' style='clear: both;'>" +
+					"<button class='button' id='showStep'>Show Single Step</button>"+
+					"</div>");
+			$("#showStep").click(function() { displayStep(); });
+
+			for (var i=0; i<squares.length; i++)
+			{
+				var id = "lform_"+i;
+				$("#contents").append("<div id='"+id+"'><div  style='clear: both;'><h3 class='title'>&nbsp;</h3></div></div>");
+				$("#"+id).append("<div style='float: left;'><div class='desc'>&nbsp;</div><div class='svg'></div></div>");
+				showStep(id, i);
+			}
+		}
+
+		function displayStep()
+		{
+			$("#contents").html("");
+			var id = "single";
+			$("#contents").append("<div id='"+id+"'><div  style='clear: both;'><h3 class='title'>&nbsp;</h3></div></div>");
+			$("#"+id).append("<div style='float: left;'><div class='desc'>&nbsp;</div><div class='svg'></div></div>");
+			
+
+			$("#"+id).append("<div id='buttons' style='clear: both;'>" +
+				"<button class='button' id='prevStep'>Previous</button>"+
+				"<button class='button' id='nextStep'>Next</button>"+
+				"<button class='button' id='runAll'>Run</button>"+
+				"<button class='button' id='showAll'>Show All</button>"+
+				"</div>");
+			$("#prevStep").click(function() { showStep(id, currentStep-1); });
+			$("#nextStep").click(function() { showStep(id, currentStep+1); });
+			$("#runAll").click(function() { runAll(0); });
+			$("#showAll").click(function() { displayAll(); });
+			
+			showStep(id, 0);
+		}
+
+		function runAll(step)
+		{
+			if (step<0) return;
+			if (step>=squares.length) return;
+			setTimeout(function() { runAll(step+1); }, 1000);
+			showStep("single", step);
+		}
+
+		function showStep(id, step)
+		{
+			if (step<0) return;
+			if (step>=squares.length) return;
+			currentStep = step;
+
+			$("#"+id+" div.svg").removeClass("hasSVG").html("");
+			$("#"+id+" div.svg").svg({onLoad: function(svg) { drawIntro(svg, id, step); } });
+		}
+
 		function addBoundingRect(svg, x, y, szX, szY, style)
 		{
 			console.log("Bounding Box: @("+x+","+y+") -> ["+szX+","+szY+"]");
 			svg.rect((x)*sqSize, (y)*sqSize, (szX)*sqSize+2*offset, (szY)*sqSize+2*offset, style);
 		}
 
-		function addSquare(svg, idx, x, y, style)
+		function addSquare(svg, sqr, origin, style)
 		{
-			console.log("Form Square: ["+idx+"] -> ("+x+","+y+")");
-			svg.rect(offset+x*sqSize, offset+(y)*sqSize, sqSize, sqSize, style);
+			var x=sqr.x-origin.x;
+			var y=sqr.y-origin.y;
+			console.log("Form Square: ["+sqr.id+"] -> ("+x+","+y+")");
+			svg.rect(offset+x*sqSize, offset+(y)*sqSize, sqr.sz.x*sqSize, sqr.sz.y*sqSize, style);
 		}
 
 		function addFoot(svg, x, y, f, style)
@@ -241,7 +290,7 @@
 			addFoot(svg, x, y, r, s);
 		}
 
-		function drawIntro(id, svg) { 
+		function drawIntro(svg, id, step) { 
 			var min = { "x": null, "y": null};
 			var max = { "x": null, "y": null};
 			for (var i=0; i<squares.length; i++)
@@ -257,18 +306,27 @@
 
 			addBoundingRect(svg, 0, 0, max.x-min.x, max.y-min.y, {fill: 'none', stroke: 'blue', strokeWidth: 1});
 
+			for (var i=0; i<step; i++)
+			{
+				var cs = squares[i];
+				addSquare(svg, cs, min, {fill: 'lightgray', stroke: 'transparent', strokeWidth: 1});
+			}
+
 			for (var i=0; i<squares.length; i++)
 			{
 				var cs = squares[i];
-				addSquare(svg, cs.id, cs.x-min.x, cs.y-min.y, {fill: 'lightgray', stroke: 'darkgray', strokeWidth: 1});
+				addSquare(svg, cs, min, {fill: 'transparent', stroke: 'darkgray', strokeWidth: 1});
 			}
 
-			var s = squares[squares.length -1];
-			addSquare(svg, s.id,  s.x-min.x, s.y-min.y, {fill: 'lightgreen', stroke: 'darkgray', strokeWidth: 1});
+			var s = squares[step];
+			addSquare(svg, s, min, {fill: 'lightgreen', stroke: 'darkgray', strokeWidth: 1});
 
 			addLine(svg, min.x, min.y, s.left, s.right,	{fill: 'red', stroke: 'red', strokeWidth: 1})
 			$("#"+id+" div.svg svg").css({"height": (max.y-min.y)*sqSize+2*offset, "width": (max.x-min.x)*sqSize+2*offset});
 			$("#"+id).css({ "width": (max.x-min.x)*sqSize+2*offset});
+
+			$("#"+id+" .title").html((s.name==null) ? "&nbsp;" : s.name);
+			$("#"+id+" .desc").html((s.desc==null) ? "&nbsp;" : s.desc);
 		}
 		/**
 		 * Foot String
@@ -455,36 +513,7 @@
 			step({ name: "Single whip", left:"S:W:T", desc: "Hanging"});
 			step({ left:":W", right: ":NW", desc: "Bo"});
 
-			/*
-			
-			step("Support the Sky", "0", "SW:NW", "NE:N", "");
-			// .......
-			step("White Crane", "0", "SW:W:T", "NE:N", "");
-			step("", "0", "SW:W", "NE:N", "Reach back");
-
-
-			step("Brush Knee Twist Step", "0", "SW:W", "NE:NW", "Step");
-			step("", "0", "SW:W", "SW:N", "Step up");
-			step("", "0", "SW:W", "NE:NW", "Step Back");
-			step("", "0", "SW:SW", "NE:NW", "Reach back");
-			step("", "W", "SE:SW", "NW:W", "Step");
-			step("", "0", "SE:SW", "NW:NW", "Reach back");
-			step("", "W", "SW:W", "NE:NW", "Step");
-			step("", "0", "SW:W", "SW:N", "Step up");
-			step("", "0", "SW:W", "NE:NW", "Step Back");
-
-			step("Punch", "0", "SW:W", "NE:NW", "Rollback");
-			// .......
-			step("", "W", "SE:SW", "NW:W", "Step");
-			// .......
-			step("", "W", "SW:S", "NE:NW", "Punch");
-			step("", "0", "SW:S", "NE:NW", "Separate Obliquely");
-			step("", "0", "SW:S", "NE:NW", "Push");
-
-			step("", "W", "SW:N", "NE:NW", "Snake");
-			step("", "W", "SW:N", "SE:N", "Tai Chi");
-			*/
-
+			displayStep();
 		});
 			</script>
 	<div id="contents">
