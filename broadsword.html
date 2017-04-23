@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Broadsword</title>
+		<link rel="stylesheet" type="text/css" href="jquery.svg.css"> 
+		<link rel="stylesheet" type="text/css" href="form-display.css"> 
+		<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+		<script type="text/javascript" src="jquery.svg.js"></script>
+		<script type="text/javascript" src="form-display.js"></script>
+	</head>
+	<body>
+		<h2>Broadsword</h2>
+		<script>
+		/**
+		 * Foot String
+		 * DirectionMoved:DirectionPointing:Type:DistanceMoved
+		 * DirectionMoved:   in { N,NE,E,SE,S,SW,W,NW,"" }
+		 * DirectionPointing:  in { N,NE,E,SE,S,SW,W,NW }
+		 * Type:(optional == "") in { F,T,H,"" } 
+		 * Distance: (optional == 1) in { 0,0.5,1,1.5,2 ...}
+		 */
+		$( document ).ready(function() {
+			step({ name: "Opening the form", face: "N", leftStart:"SW:N", rightStart:"SW:N", desc: "Wu Chi"});
+			   step({ right:"E:N", desc: "Tai Chi"});
+			   step({ desc: "Heaven and Earth"});
+			step({ name: "Stepping up to Seven Starts",  right: "S:E:T"});
+			step({ name: "Sit back and ride the tiger", left:":E:T", right:"W:SE::2"});
+			step({ name: "Raise leg to cut", left:":NE", right:"E::F"})
+			step({ name: "Coil the sabre to pierce",  right:"E:E", desc: "Divert on arm"});
+			   step({ left: "E:E::2", right:":SE", desc: "Step forward and pierce"});
+			step({ name: "Push the blade", left: "SW:SE:T:1" });
+				step({ left: "NE:E::1"});
+				step({ left: "SW:NE::1"});
+				step({ right: "SE:E::1"});
+				step({ desc: "Cut over the knee"});
+			step({ name: "Right, left, upper cartwheel", left: "E:E::2", right:":SE"});
+				step({ right: "E:E::2", left:":NE"});
+				step({ left: "E:E::2", right:":SE"});
+			step({ name: "Retreat to attack", left: ":SE", right:":S" });
+			step({ name: "Entwine to hack", left: "S:S::2", right:":SW"});
+			step({ name: "Turn and slash", left: ":NW", desc: "Snake"});
+				step({ right: "E:N::2"});
+			step({ name: "Entwine to hack", left:"N:N::2", right:":NE" });
+			step({ name: "Turn and slash", left: ":SE", desc: "Snake"});
+				step({ right: "W:S::2"});
+			step({ name: "Raise leg to pierce", right: "::F" });
+			step({ name: "Advance and stab upwards", right: ":S", desc:"Step down" });
+				step({ left: "S:S::2", right: ":SW", desc: "Stab"});
+			step({ name: "Turn and slash", left: ":NW", desc: "Snake" });
+				step({ right: "E:N::2"});
+
+			step({ name: "Transfer the sabre to kick", left: "N:N::2", right:":NE", desc: "Step and transfer"});
+				step({ left: ":NW", right:"N:N:F", desc:"Kick"});
+				step({ left: ":N:T", right: "S:NE:2", desc: "Step back to hanging stance"});
+
+			step({ name: "Shake loose the girdle to tie up the tiger", left: ":N:" });
+				step({ left: ":NE", right: ":E"});
+				step({ left: ":N", right: ":NE"});
+
+			step({ name: "Kick like a mandarin duck", right: "N:N:F" });
+				step({ left: ":N:T", right: "S:NE"});
+
+
+			step({ name: "Split Mount Tai", left: ":N"});
+			step({ name: "Raise leg to pierce", left: ":NE", right: ":E:F"});
+			step({ name: "Entwine to slash" });
+				step({ right: ":E"});
+
+
+			step({ name: "Turn and enter diagonally", right: ":NW", desc:"Snake"});
+				step({ left: ":SW", right: ":W:T", desc:"Lady"});
+				step({ right: "NW:W::2", desc:"Step"});
+
+			step({ name: "Left, right and upward cartwheel" });
+				step({ left: "W:W::2", right: ":NW"});
+				step({ right: "W:W::2", left: ":SW"});
+
+
+			step({ name: "Carp jumps through the dragon’s gate", right: ":W:T" });
+				step({ left: "W:W:T", right:"E:NW"});
+
+
+			step({ name: "Entwine to hack, shift and slash", left: ":W" });
+				step({ left: ":NW", right:":N"});
+
+			step({ name: "Step back to seven stars" , left: ":N:T", right: "S:NE::2"});
+
+			step({ name: "Closing the Form", left: "S:N", right: ":N"});
+			displaySummary();
+		});
+			</script>
+	<div id="contents">
+	</div>
+	</body>
+</html>
