@@ -14,3 +14,17 @@
 	height: 30px;
 	font-size: 10px;
 }
+
+rect.fg {
+    fill: transparent;
+    stroke: darkgray;
+}
+
+rect.bg {
+    fill: lightgray;
+    stroke: lightgray;
+}
+rect.current {
+    fill: lightgreen;
+    stroke: darkgray;
+}
