@@ -3,8 +3,8 @@ var squares = [ ];
 var currentSquare = null;
 var currentStep = 0;
 
-var sqSize = 60;
-var offset = 15;
+var sqSize = 27;
+var offset = 5;
 
 var SIDE = {
 	LEFT:  {value: 0, name: "Flat",  code: "L"}, 
@@ -134,9 +134,10 @@ function updateCorners(sqr)
 	if (minY == maxY) minY-=1;
 	sqr.x = minX;
 	sqr.y = minY;
-	sqr.sz = { x: maxX-minX, y: maxY-minY };
-	//sqr.label = "@("+minX+","+minY+") ["+sqr.sz.x+","+sqr.sz.y+"]";
-	sqr.label = "@("+minX+","+minY+")";
+	sqr.sz = { x: (maxX-minX), y: (maxY-minY) };
+
+	sqr.label = "("+(minX+6)*2+","+minY*2+") => ("+(minX+sqr.sz.x+6)*2+","+(minY+sqr.sz.y)*2+") - ["+sqr.sz.x*2+","+sqr.sz.y*2+"]";
+	//sqr.label = "@("+minX+","+minY+")";
 }
 
 /* Example
@@ -148,6 +149,10 @@ function updateCorners(sqr)
  * step("", "0", "SW:N", "SE:NE", "Hanging 2");
  */
 
+var currentLabel="";
+var currentStep="";
+var sqrDesc="";
+var sqrMap = new Map();
 function step(obj)
 {
 	var newSquare;
@@ -171,19 +176,76 @@ function step(obj)
 	updateCorners(newSquare);
 	squares.push(newSquare);
 	currentSquare = newSquare;
+	if (!sqrMap.has(newSquare.label))
+		sqrMap.set(newSquare.label, sqrMap.size+1);
+
+
+	var sqrIdx = sqrMap.get(newSquare.label);
+	newSquare.number = sqrIdx;
+	if (currentLabel != newSquare.label)
+	{
+		if (sqrDesc!= "") sqrDesc+="</ul></li>";
+		else sqrDesc="<ul>";
+		sqrDesc+="<li>Sqr : "+sqrIdx+" : " +newSquare.label+"<ul>";
+		sqrDesc+="<li>"+newSquare.name+"</li>";
+	}
+	else if (currentStep != newSquare.name)
+	{
+		sqrDesc+="<li>"+newSquare.name+"</li>";
+	}
+	currentLabel = newSquare.label;
+	currentStep = newSquare.name;
+
+}
+
+function addButtons(id, current)
+{
+	var buttons="<div id='buttons' style='clear: both;'>";
+
+	if(current == "single")
+		buttons += "<button class='button' id='prevStep'>Previous</button>";
+
+	if(current == "single")
+		buttons += "<button class='button' id='nextStep'>Next</button>";
+
+	if (current == "single") 
+		buttons += "<button class='button' id='runAll'>Run All</button>";
+
+
+	if (current != "single") 
+		buttons += "<button class='button' id='showStep'>Show Single Step</button>";
+
+	if (current != "list") 
+		buttons += "<button class='button' id='showList'>Show List</button>";
+
+	if (current != "summary") 
+		buttons += "<button class='button' id='showSummary'>Show Summary</button>";
+
+	if (current != "all") 
+		buttons += "<button class='button' id='showAll'>Show All</button>";
+
+	if (current != "merged") 
+		buttons += "<button class='button' id='showMerged'>Show Merged</button>";
+
+	buttons += "</div>";
+	$("#"+id).append(buttons);
+	$("#prevStep").click(function() { showStep(id, currentStep-1, "ALL"); });
+	$("#nextStep").click(function() { showStep(id, currentStep+1, "ALL"); });
+	$("#runAll").click(function() { runAll(0); });
+	$("#showStep").click(function() { displayStep(); });
+	$("#showList").click(function() { displayList(); });
+	$("#showAll").click(function() { displayAll(); });
+	$("#showMerged").click(function() { displayMerged(); });
+	$("#showSummary").click(function() { displaySummary(); });
+	
 }
 
 function displayAll()
 {
 	var fullSteps= [ ];
 	$("#contents").html("");
-	$("#contents").append("<div id='buttons' style='clear: both;'>" +
-			"<button class='button' id='showStep'>Show Single Step</button>"+
-			"<button class='button' id='showSummary'>Show Summary</button>"+
-			"</div>");
+	//addButtons("contents", "all");
 	$("#showStep").click(function() { displayStep(); });
-	$("#showSummary").click(function() { displaySummary(); });
-
 	var title = "";
 	for (var i=0; i<squares.length; i++)
 	{
@@ -200,19 +262,33 @@ function displayAll()
 		showStep(id, i, "ALL");
 		title = s.name;
 	}
+
+	$("#showSummary").click(function() { displaySummary(); });
+}
+
+function displayList()
+{
+	$("#contents").html("");
+	//addButtons("contents", "list");
+	$("#contents").append("<div>"+sqrDesc+"</ul></li></ul></div>");
+}
+
+function displayMerged()
+{
+	$("#contents").html("");
+	addButtons("contents", "merged");
+	var id = "single";
+	$("#contents").append("<div id='"+id+"'><div  style='clear: both;'><h3 class='title'>&nbsp;</h3></div></div>");
+	$("#"+id).append("<div style='float: left bottom;'><div class='desc'>&nbsp;</div><div class='svg'></div></div>");
+	
+	showStep(id, 0, "MERGED");
 }
 
 function displaySummary()
 {
 	var fullSteps= [ ];
 	$("#contents").html("");
-	$("#contents").append("<div id='buttons' style='clear: both;'>" +
-			"<button class='button' id='showStep'>Show Single Step</button>"+
-			"<button class='button' id='showAll'>Show All</button>"+
-			"</div>");
-	$("#showStep").click(function() { displayStep(); });
-	$("#showAll").click(function() { displayAll(); });
-
+	addButtons("contents", "summary");
 	var title = "";
 	var label = "";
 	for (var i=0; i<squares.length; i++)
@@ -242,24 +318,10 @@ function displaySummary()
 function displayStep()
 {
 	$("#contents").html("");
+	addButtons("contents", "single");
 	var id = "single";
 	$("#contents").append("<div id='"+id+"'><div  style='clear: both;'><h3 class='title'>&nbsp;</h3></div></div>");
 	$("#"+id).append("<div style='float: left bottom;'><div class='desc'>&nbsp;</div><div class='svg'></div></div>");
-	
-
-	$("#"+id).append("<div id='buttons' style='clear: both;'>" +
-		"<button class='button' id='prevStep'>Previous</button>"+
-		"<button class='button' id='nextStep'>Next</button>"+
-		"<button class='button' id='runAll'>Run</button>"+
-		"<button class='button' id='showAll'>Show All</button>"+
-		"<button class='button' id='showSummary'>Show Summary</button>"+
-		"</div>");
-	$("#prevStep").click(function() { showStep(id, currentStep-1, "ALL"); });
-	$("#nextStep").click(function() { showStep(id, currentStep+1, "ALL"); });
-	$("#runAll").click(function() { runAll(0); });
-	$("#showAll").click(function() { displayAll(); });
-	$("#showSummary").click(function() { displaySummary(); });
-	
 	showStep(id, 0, "ALL");
 }
 
@@ -267,7 +329,7 @@ function runAll(step)
 {
 	if (step<0) return;
 	if (step>=squares.length) return;
-	setTimeout(function() { runAll(step+1); }, 1000);
+	setTimeout(function() { runAll(step+1); }, 500);
 	showStep("single", step, "ALL");
 }
 
@@ -305,23 +367,26 @@ function t(point, origin, border, scale)
 }
 function addFoot(svg, f, origin, style)
 {	
+	var scale =0.7;
+	var ty = 3 * scale;
 	var c = t(f, origin, offset, sqSize);
 	var s = jQuery.extend({}, style);
 	var deg = f.d.dir;
 
 	var s_h = jQuery.extend({}, style);
 	var s_t = jQuery.extend({}, style);
-	var side = (f.s == SIDE.LEFT) ? -3 : 3;
+	var tx = ((f.s == SIDE.LEFT) ? -3 : 3)*scale;
 
 	if (f.t == TYPE.HANGING_TOE)  s_h.fill="transparent";
 	if (f.t == TYPE.HANGING_HEAL) s_t.fill="transparent";
 
 	if (f.t != TYPE.FLOATING)
 	{
-		s_h.transform="translate("+c.x+" "+c.y+") rotate("+deg+") translate("+side+"  3)";
-		s_t.transform="translate("+c.x+" "+c.y+") rotate("+deg+") translate("+side+"-3)";
-		svg.ellipse('','', 2, 3, s_h);
-		svg.ellipse('','', 2, 3, s_t);
+		s_h.transform="translate("+c.x+" "+c.y+") rotate("+deg+") translate("+tx+"  "+ty+")";
+		s_t.transform="translate("+c.x+" "+c.y+") rotate("+deg+") translate("+tx+" -"+ty+")";
+
+		svg.ellipse('','', 2*scale, 3*scale, s_h);
+		svg.ellipse('','', 3*scale, 4*scale, s_t);
 	}
 }
 
@@ -339,12 +404,13 @@ function addLine(svg, origin, l, r, style)
 	addFoot(svg, r, origin, s);
 }
 
-function drawIntro(svg, id, step, drawFrom ) { 
+function drawIntro(svg, id, step, drawType ) { 
 	var min = { "x": null, "y": null};
 	var max = { "x": null, "y": null};
 
-	var drawTo = (drawFrom=="ALL") ? squares.length : step+1;
-	drawFrom = (drawFrom=="ALL") ? 0 : drawFrom;
+	var drawTo = (drawType=="ALL" || drawType=="MERGED") ? squares.length : step+1;
+	var drawFrom = (drawType=="ALL" || drawType=="MERGED") ? 0 : drawType;
+
 	for (var i=drawFrom; i<drawTo; i++)
 	{
 		var cs = squares[i];
@@ -356,27 +422,45 @@ function drawIntro(svg, id, step, drawFrom ) {
 	max.x=max.x+1;
 	max.y=max.y+1;
 
+	if (drawType!="MERGED") drawTo--;
 	addBoundingRect(svg, 0, 0, max.x-min.x, max.y-min.y, {fill: 'none', stroke: 'blue', strokeWidth: 1});
 
-	for (var i=drawFrom; i<drawTo-1; i++)
+	for (var i=drawFrom; i<drawTo; i++)
 	{
 		var cs = squares[i];
 		addSquare(svg, cs, min, {fill: 'lightgray', stroke: 'transparent', strokeWidth: 1});
 	}
 
-	for (var i=drawFrom; i<drawTo-1; i++)
+
+	for (var i=drawFrom; i<drawTo; i++)
 	{
 		var cs = squares[i];
+		var x=cs.x-min.x;
+		var y=cs.y-min.y;
 		addSquare(svg, cs, min, {fill: 'transparent', stroke: 'darkgray', strokeWidth: 1});
 	}
 
-	var s = squares[step];
-	addSquare(svg, s, min, {fill: 'lightgreen', stroke: 'darkgray', strokeWidth: 1});
+	if (drawType != "MERGED")
+	{
+		var s = squares[step];
+		addSquare(svg, s, min, {fill: 'lightgreen', stroke: 'darkgreen', strokeWidth: 1});
+		svg.text(offset+(s.x-min.x+s.sz.x*0.5)*sqSize, offset+(s.y-min.y+0.5)*sqSize, ""+s.number+"", {fill: 'darkgreen'});
+		addLine(svg, min, s.left, s.right,	{fill: 'red', stroke: 'red', strokeWidth: 1});
+	}
+	else
+	{
+		for (var i=drawFrom; i<drawTo; i++)
+		{
+			var s = squares[i];
+			addLine(svg, min, s.left, s.right,	{fill: 'red', stroke: 'red', strokeWidth: 1});
+		}
+	}
 
-	addLine(svg, min, s.left, s.right,	{fill: 'red', stroke: 'red', strokeWidth: 1})
 	$("#"+id+" div.svg svg").css({"height": (max.y-min.y)*sqSize+2*offset, "width": (max.x-min.x)*sqSize+2*offset});
 	$("#"+id).css({ "width": (max.x-min.x)*sqSize+2*offset});
 
 	$("#"+id+" .title").html((s.name==null) ? "&nbsp;" : s.name);
-	$("#"+id+" .desc").html((s.desc==null) ? "&nbsp;" : s.desc);
+	var desc = "Square: "+s.number+"<br>";
+	if (s.desc != null && s.desc != "") desc += s.desc;
+	$("#"+id+" .desc").html(desc);
 }
