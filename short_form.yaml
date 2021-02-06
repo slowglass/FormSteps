@@ -1,0 +1,205 @@
+form:
+  name: Short Form
+  steps:
+    - Opening the Form:
+        - stance: Wu Chi
+          direction: North
+        - stance: Tai Chi
+          direction: North
+        - stance: Right Hanging Stance (90)
+          direction: East
+    - "Part the Wild Horse’s Mane":
+        - stance: Right Bo Stance
+          direction: East
+        - stance: Right Rockback (45)
+          direction: South East
+        - stance: Left Bo Stance
+          direction: East
+        - stance: Left Rockback (45)
+          direction: North East
+        - stance: Right Bo Stance
+          direction: East
+    - "White Crane Spreads its Wings":
+        - stance: Tai Chi (45L)
+          direction: East
+        - stance: Right Hanging Stance
+          direction: East
+    - Brush Knee with Twist Step:
+        - stance: Right Hanging Stance
+          direction: East
+        - stance: Right Bo Stance
+          direction: East
+        - stance: Right Rockback (0)
+          direction: East
+        - stance: Right Rockback (45)
+          direction: South East
+        - stance: Left Bo Stance
+          direction: East
+        - stance: Left Rockback (0)
+          direction: East
+        - stance: Left Rockback (45)
+          direction: North East
+        - stance: Right Bo Stance
+          direction: East
+    - Play the Guitar:
+      - stance: Tai Chi (45L)
+        direction: East
+      - stance: Left Hanging Stance (Heal)
+        direction: East
+    - Back-stepping Monkey:
+      - stance: Left Back Stance
+        direction: East
+      - stance: Right Back Stance
+        direction: East
+      - stance: Left Back Stance
+        direction: East
+      - stance: Right Back Stance
+        direction: East
+    - Grasp the Sparrows Tail to the Left and to the Right:
+      - stance: Right Hanging Stance
+        direction: East
+      - stance: Right Bo Stance
+        direction: East
+      - stance: Right Back Stance
+        direction: East
+      - stance: Right Bo Stance
+        direction: East
+      - stance: Right Back Stance
+        direction: East
+      - stance: Right Bo Stance
+        direction: East
+      - stance: Right Snake Stance
+        direction: West
+      - stance: Left Bo Stance
+        direction: West
+      - stance: Left Back Stance
+        direction: West
+      - stance: Left Bo Stance
+        direction: West
+      - stance: Left Back Stance
+        direction: West
+      - stance: Left Bo Stance
+        direction: West
+      - stance: Left Snake Stance
+        direction: West
+    - Single Whip:
+      - stance: Left Snake Stance
+        direction: East
+      - stance: Right Hanging Stance
+        direction: East
+      - stance: Right Bo Stance
+        direction: East
+    - Cloud Hands:
+      - stance: Right Snake Stance (90)
+        direction: North
+      - stance: Wu Chi
+        direction: North
+      - stance: Tai Chi
+        direction: North
+      - stance: Wu Chi
+        direction: North
+      - stance: Tai Chi
+        direction: North
+      - stance: Wu Chi
+        direction: North
+      - stance: Tai Chi
+        direction: North
+      - stance: Wu Chi
+        direction: North
+    - Single Whip:
+      - stance: Left Hanging Stance
+        direction: East
+      - stance: Left Bo Stance
+        direction: East
+    - Mount the Horse:
+      - stance: Left Bo Stance (Small)
+        direction: East
+      - stance: Left Hanging Stance(Small)
+        direction: East
+    - Stretch the Right Heel:
+      - stance: Right Golden Cockerel
+        direction: East
+      - stance: Right Stretch the Heal
+        direction: East
+      - stance: Right Golden Cockerel
+        direction: East
+    - Boxing the Tiger’s Ears:
+      - stance: Right Bo Stance
+        direction: East
+      - stance: Left Reverse Snake Stance
+        direction: South
+    - Stretch the Left Heel:
+      - stance: Left Golden Cockerel
+        direction: South
+      - stance: Left Stretch the Heal
+        direction: South
+      - stance: Left Golden Cockerel
+        direction: South
+    - Snake Creeps Down (Left):
+      - stance: Wu Chi
+        direction: South
+      - stance: Tame the Tiger to the Left
+        direction: South
+      - stance: Left Snake Creeps Down
+        direction: East
+      - stance: Left Bo Stance (Narrow)
+        direction: East
+    - Golden Cockerel Stands on One Leg:
+      - stance: Right Golden Cockerel
+        direction: East
+    - Snake Creeps Down (Right):
+      - stance: Wu Chi
+        direction: North
+      - stance: Tame the Tiger to the Right
+        direction: North
+      - stance: Right Snake Creeps Down
+        direction: West
+      - stance: Right Bo Stance (Narrow)
+        direction: West
+    - Golden Cockerel Stands on One Leg:
+      - stance: Left Golden Cockerel
+        direction: West
+    - Jade Lady Works the Shuttles:
+      - stance: Left Hanging Stance (90)
+        direction: South West
+      - stance: Left Bo Stance
+        direction: South West
+      - stance: Right Bo Stance
+        direction: West
+      - stance: Right Hanging Stance
+        direction: North West
+      - stance: Right Bo Stance
+        direction: North West
+      - stance: Left Bo Stance
+        direction: West
+    - Pluck the Needle from the Bottom of the Ocean:
+      - stance: Right Bo Stance (Small)
+        direction: East
+      - stance: Right Hanging Stance(Small)
+        direction: East
+    - Fan through the Back:
+      - stance: Right Bo Stance
+        direction: East
+    - Turn, Parry and Punch, Part 2 – Parry and Punch:
+      - stance: Right Snake Stance
+        direction: West
+      - stance: Left Golden Cockerel
+        direction: West
+      - stance: Left Stretch the Heal
+        direction: West
+      - stance: Wu Chi
+        direction: South West
+      - stance: Right Bo Stance
+        direction: West
+    - Apparent Close-Up:
+      - stance: Right Back Stance
+        direction: West
+      - stance: Right Bo Stance
+        direction: West
+    - Closing the Form:
+      - stance: Right Snake Stance (90)
+        direction: North
+      - stance: Tai Chi
+        direction: North
+      - stance: Wu Chi
+        direction: North

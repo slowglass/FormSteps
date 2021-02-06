@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Long Form</title>
+		<link rel="stylesheet" type="text/css" href="jquery.svg.css"> 
+		<link rel="stylesheet" type="text/css" href="form-display.css">
+		<script type="text/javascript" src="form-display.js"></script>
+		<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.0.0/js-yaml.min.js"></script>
+	</head>
+	<body>
+		<h2 id="title">TEST</h2>
+		<h3 id="step"></h3>
+		<h4 id="stance"></h4>
+		<svg width="350" height="350">
+			<g transform="rotate(0 25 50)" id="l-foot">
+				<mask id="l-foot-none">
+					<rect x="-10" y="-10" width="0" height="5" fill="white" />
+				</mask>
+				<mask id="l-foot-front">
+					<rect x="97" y="100" width="50" height="45" fill="white" />
+				</mask>
+				<mask id="l-foot-back">
+					<rect x="97" y="170" width="50" height="56" fill="white" />
+				</mask>
+				<g id="l-foot-paths" >
+					<g transform="translate(100,100) translate(0.000000,128.000000) scale(0.0100000,-0.010000)"
+					   fill="#000000" stroke="none" >
+						<path d="M3794 12765 c-278 -93 -496 -374 -580 -750 -22 -98 -30 -337 -14
+								-433 34 -208 95 -355 202 -490 143 -179 364 -268 563 -227 326 68 578 373 662
+								800 19 99 22 356 4 440 -49 236 -134 401 -270 527 -120 112 -237 158 -395 157
+								-78 0 -117 -6 -172 -24z"/>
+						<path d="M2563 12336 c-152 -49 -282 -210 -349 -431 -24 -80 -27 -107 -28
+								-240 -1 -161 9 -216 61 -322 128 -265 411 -274 601 -19 203 273 208 725 10
+								928 -26 27 -69 58 -94 70 -59 26 -146 32 -201 14z"/>
+						<path d="M1601 11903 c-113 -54 -222 -206 -267 -368 -24 -89 -30 -274 -10
+								-358 43 -184 156 -300 291 -301 258 -3 473 394 400 738 -53 252 -232 377 -414
+								289z"/>
+						<path d="M814 11236 c-276 -86 -409 -585 -228 -853 107 -157 288 -158 429 -1
+								91 101 144 243 152 408 11 222 -73 396 -215 444 -54 19 -83 19 -138 2z"/>
+						<path d="M2570 10850 c-168 -18 -368 -76 -587 -170 -615 -264 -1081 -708
+								-1257 -1200 -75 -208 -101 -381 -93 -632 8 -271 51 -493 157 -809 129 -385
+								267 -684 701 -1515 418 -801 503 -1018 628 -1601 17 -79 45 -207 62 -285 54
+								-253 107 -463 154 -604 151 -459 384 -736 711 -846 60 -20 88 -23 209 -22 133
+								0 145 2 230 33 185 68 334 161 460 285 204 203 284 415 272 726 -12 311 -102
+								596 -387 1225 -347 767 -417 979 -427 1305 -8 240 23 414 117 653 79 199 143
+								303 589 960 241 355 342 597 366 872 11 135 -22 335 -84 504 -240 649 -888
+								1103 -1606 1125 -77 3 -174 1 -215 -4z"/>
+					</g>
+					<circle cx="125" cy="150" r="1" fill="red" />
+				</g>
+			</g>
+			<g transform="rotate(0 75 50)" id="r-foot">
+				<mask id="r-foot-none">
+					<rect x="-10" y="-10" width="0" height="5" fill="white" />
+				</mask>
+				<mask id="r-foot-front">
+					<rect x="150" y="100" width="50" height="45" fill="white" />
+				</mask>
+				<mask id="r-foot-back">
+					<rect x="150" y="170" width="50" height="56" fill="white" />
+				</mask>
+				<g id="r-foot-paths" >
+					<g transform="translate(100,100) translate(100.000000, 128.000000) scale(-0.0100000, -0.010000)"
+					   fill="#000000" stroke="none">
+						<path d="M3794 12765 c-278 -93 -496 -374 -580 -750 -22 -98 -30 -337 -14
+							-433 34 -208 95 -355 202 -490 143 -179 364 -268 563 -227 326 68 578 373 662
+							800 19 99 22 356 4 440 -49 236 -134 401 -270 527 -120 112 -237 158 -395 157
+							-78 0 -117 -6 -172 -24z"/>
+						<path d="M2563 12336 c-152 -49 -282 -210 -349 -431 -24 -80 -27 -107 -28
+							-240 -1 -161 9 -216 61 -322 128 -265 411 -274 601 -19 203 273 208 725 10
+							928 -26 27 -69 58 -94 70 -59 26 -146 32 -201 14z"/>
+						<path d="M1601 11903 c-113 -54 -222 -206 -267 -368 -24 -89 -30 -274 -10
+							-358 43 -184 156 -300 291 -301 258 -3 473 394 400 738 -53 252 -232 377 -414
+							289z"/>
+						<path d="M814 11236 c-276 -86 -409 -585 -228 -853 107 -157 288 -158 429 -1
+							91 101 144 243 152 408 11 222 -73 396 -215 444 -54 19 -83 19 -138 2z"/>
+						<path d="M2570 10850 c-168 -18 -368 -76 -587 -170 -615 -264 -1081 -708
+							-1257 -1200 -75 -208 -101 -381 -93 -632 8 -271 51 -493 157 -809 129 -385
+							267 -684 701 -1515 418 -801 503 -1018 628 -1601 17 -79 45 -207 62 -285 54
+							-253 107 -463 154 -604 151 -459 384 -736 711 -846 60 -20 88 -23 209 -22 133
+							0 145 2 230 33 185 68 334 161 460 285 204 203 284 415 272 726 -12 311 -102
+							596 -387 1225 -347 767 -417 979 -427 1305 -8 240 23 414 117 653 79 199 143
+							303 589 960 241 355 342 597 366 872 11 135 -22 335 -84 504 -240 649 -888
+							1103 -1606 1125 -77 3 -174 1 -215 -4z"/>
+					</g>
+				</g>
+				<circle cx="175" cy="150" r="1" fill="red" />
+			</g>
+		</svg>
+		<div id="contents" style="overflow-y: scroll; height: 30em;">
+		</div>
+		<div id="test_buttons"></div>
+		<script>
+			function l_foot(x, y, rotation, part) { foot("l-foot", x, y, rotation, part); }
+			function r_foot(x, y, rotation, part) { foot("r-foot", x, y, rotation, part); }
+			function foot(type, x, y, rotation, part) {
+				let cx = 125;
+				let cy = 150;
+				rotation += 5;
+				if (type === "r-foot") {
+					cx = 175;
+					cy = 150;
+					rotation -=10;
+				}
+				let foot = document.getElementById(type);
+				foot.setAttribute("transform", "translate("+x+","+y+") rotate(" +rotation + " " + cx +" " +cy+") ");
+				let foot_paths = document.getElementById(type+'-paths');
+				if (part === undefined || part.length === 0)
+					foot_paths.setAttribute("mask", "");
+				else
+					foot_paths.setAttribute("mask", "url(#"+type+"-"+part+")");
+			}
+
+			function wu_chi() { l_foot(0, 0, 0); r_foot(0, 0, 0); }
+			function tai_chi() { l_foot(-30, 0, 0); r_foot(30, 0, 0); }
+			function tai_chi_45l() { l_foot(-30, 0, -45); r_foot(30, 0, 0); }
+			function tai_chi_45r() { l_foot(-30, 0, 0); r_foot(30, 0, 45); }
+			function l_bo(part) {  l_foot(-45, -45, 0, part); r_foot(45, 45, 45); }
+			function l_bo_s(part) {  l_foot(-30, -30, 0, part); r_foot(30, 30, 45); }
+			function l_bo_l(part) {  l_foot(-45, -55, 0, part); r_foot(45, 55, 45); }
+			function l_bo_n(part) {  l_foot(-10, -45, 0, part); r_foot(10, 45, 45); }
+			function l_tt() {  l_foot(-45, -10, 0); r_foot(45, 10, 0); }
+			function l_scd() {  l_foot(-45, -10, -90); r_foot(45, 10, 0); }
+			function l_gc() {  l_bo("none"); }
+			function l_snake(r) {  l_foot(-45, -45, r); r_foot(45, 45, 45); }
+			function l_rsnake(r) {  l_foot(-45, 45, 0); r_foot(45, -45, 45-r); }
+			function l_rsnake_90() {  l_rsnake(90); }
+			function l_snake_90() {  l_snake(90); }
+			function l_snake_135() {  l_snake(135); }
+			function l_hang() {  l_bo("front"); }
+			function l_hang_s() {  l_bo_s("front"); }
+			function l_hang_heal() { l_bo("back"); }
+			function l_hang_90() {  l_foot(-45, -45, 0, "front"); r_foot(45, 45, 90); }
+			function l_rockback_45() {  l_foot(-45, -45, -45, "back"); r_foot(45, 45, 45); }
+			function r_bo(part) {  l_foot(-45, 45, -45); r_foot(45, -45, 0, part); }
+			function r_bo_s(part) {  l_foot(-30, 30, -45); r_foot(30, -30, 0, part); }
+			function r_bo_l(part) {  l_foot(-45, 55, -45); r_foot(45, -55, 0, part); }
+			function r_bo_n(part) {  l_foot(-10, 45, -45); r_foot(10, -45, 0, part); }
+			function r_tt() {  l_foot(-45, -10, 0); r_foot(45, 10, 0); }
+			function r_scd() {  l_foot(-45, -10, 0); r_foot(45, 10, 90); }
+			function r_gc() {  r_bo("none"); }
+			function r_snake(r) {  l_foot(-45, 45, -45); r_foot(45, -45, -1*r); }
+			function r_rsnake(r) {  l_foot(-45, 45, -45+r); r_foot(45, -45, 0); }
+			function r_snake_90() {  r_snake(90); }
+			function r_snake_135() {  r_snake(135); }
+			function r_rsnake_90() {  r_rsnake(90); }
+			function r_hang() {  r_bo("front"); }
+			function r_hang_s() {  r_bo_s("front"); }
+			function r_hang_heal() {  r_bo("back"); }
+			function r_hang_90() {  l_foot(-45, 45, -90); r_foot(45, -45, 0, "front"); }
+			function r_rockback_45() { l_foot(-45, 45, -45); r_foot(45, -45, 45, "back"); }
+
+			let stances = [];
+			let stanceMappings = new Map([
+				["Wu Chi", wu_chi],
+				["Tai Chi", tai_chi],
+				["Tai Chi (45L)", tai_chi_45l],
+
+				["Right Bo Stance", r_bo],
+				["Right Back Stance", r_bo],
+				["Right Bo Stance (Small)", r_bo_s],
+				["Right Bo Stance (Narrow)", r_bo_n],
+				["Right Hanging Stance", r_hang],
+				["Right Hanging Stance (90)", r_hang_90],
+				["Right Rockback (45)", r_rockback_45],
+				["Right Rockback (0)", r_hang_heal],
+				["Right Golden Cockerel", r_gc],
+				["Right Stretch the Heal", r_gc],
+				["Right Hanging Stance(Small)", r_hang_s],
+				["Right Snake Stance", r_snake_135],
+				["Right Snake Stance (90)", r_snake_90],
+				["Right Reverse Snake Stance", r_rsnake_90],
+				["Tame the Tiger to the Right", r_tt],
+				["Right Snake Creeps Down", r_scd],
+
+				["Left Bo Stance", l_bo],
+				["Left Back Stance", l_bo],
+				["Left Bo Stance (Small)", l_bo_s],
+				["Left Bo Stance (Narrow)", l_bo_n],
+				["Left Hanging Stance", l_hang],
+				["Left Hanging Stance (90)", l_hang_90],
+				["Left Hanging Stance (Heal)", l_hang_heal],
+				["Left Rockback (45)", l_rockback_45],
+				["Left Rockback (0)", l_hang_heal],
+				["Left Golden Cockerel", l_gc],
+				["Left Stretch the Heal", l_gc],
+				["Left Hanging Stance(Small)", l_hang_s],
+				["Left Snake Stance", l_snake_135],
+				["Left Snake Stance (90)", l_snake_90],
+				["Left Reverse Snake Stance", l_rsnake_90],
+				["Tame the Tiger to the Left", l_tt],
+				["Left Snake Creeps Down", l_scd]
+			]);
+			function set_stance(step, stance, direction) {
+				$('#step').html(step);
+				$('#stance').html(stance + ' to the ' + direction);
+				const fn = stanceMappings.get(stance);
+				if (fn === undefined)
+					console.log("No yet supported: "+stance);
+				else
+					fn();
+			}
+			function show_steps(i) {
+				set_stance(stances[i].step, stances[i].stance, stances[i].direction)
+				i=i+1;
+				if (i<stances.length)
+					setTimeout(() => show_steps(i), 1000);
+			}
+			let form = '';
+			let c=0;
+			$( document ).ready(function() {
+				let searchParams = new URLSearchParams(window.location.search)
+				let form_name = searchParams.get('form')
+				$.get(form_name+'_form.yaml', (data) => {
+					form = jsyaml.load(data).form
+					$("#title").html(form.name);
+					let cat="";
+					stanceMappings.forEach((v, k) => {
+						let nc="Center";
+						if (k.includes("Right")) nc = "Right";
+						if (k.includes("Left")) nc = "Left";
+						if (nc != cat) {
+							$("#test_buttons").append('<br/><h4>' + nc + '</h4>');
+							cat = nc;
+							c = 0;
+						}
+						let s = k.replace(" to the "+cat, '');
+						s = s.replace(cat+' ', '');
+						$("#test_buttons").append('<input id="button1" type="button" value="'+s+'" onclick="'+v.name+'()"/>');
+						c=c+1;
+						if (c==4) { c=0; $("#test_buttons").append('<br/>');}
+					});
+					console.log()
+					form.steps.forEach((step) => {
+						const name = Object.keys(step)[0]
+						const arr = Object.values(step)[0]
+						let txt='<details><summary>'+name+'</summary>';
+						arr.forEach((item) => {
+							txt += '<li><a href="#" onclick="set_stance(\'' + item.stance+ '\')">'+item.stance+' to the '+item.direction+'</a></li>';
+							if (!stanceMappings.has(item.stance))
+								console.log("Cannot find "+item.stance);
+							stances.push({step: name, stance: item.stance, direction: item.direction})
+						});
+						$("#contents").append(txt+'</details>');
+					});
+					show_steps(0);
+				})
+			});
+		</script>
+	</body>
+</html>
